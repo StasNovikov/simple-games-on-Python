@@ -6,7 +6,7 @@ inventory = {}
 
 # рассмотрим его как условие
 if not inventory:
-    print("Вы бзоружны.")
+    print("Вы безоружны.")
 input("\nНажмите Enter, чтобы продолжить.")
 
 # теперь создадим кортеж с несколькими элементами
@@ -20,3 +20,9 @@ inventory = {
 # выведем кортеж на экран
 print("\nСодержимое кортежа: ")
 print(inventory)
+
+# выведем все элементы последовательно
+print("\nИтак, в вашем арсенале:")
+for item in inventory:
+    print(item)
+input("\n\nPress the enter key to exit")
