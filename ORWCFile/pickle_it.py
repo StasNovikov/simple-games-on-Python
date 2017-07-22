@@ -26,3 +26,16 @@ print(variety)
 print(shape)
 print(brand)
 f.close()
+
+print("\nПомещение списков на полку")
+s = shelve.open("pickles2.dat")
+s["variety"] = ["огурцы","помидора","капуста"]
+s["shape"] = ["целые","кубиками","соломкой"]
+s["brand"] = ["Главпродукт","Чумак","Бондюэль"]
+s.sync() # Убедимся, что данные записаны
+print("\nИзвлечение списков из файла полки")
+print("Торговые марки - ", s["brand"])
+print("Формы - ", s["shape"])
+print("Виды овощей - ", s["variety"])
+s.close()
+input("Press the enter key to exit")
