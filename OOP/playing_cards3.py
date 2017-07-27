@@ -25,6 +25,16 @@ class Positionable_Card(Card):
         super(Positionable_Card, self).__init__(rank, suit)
         self.is_face_up = face_up
 
+    def __str__(self):
+        if self.is_face_up:
+            rep = super(Positionable_Card, self).__str__()
+        else:
+            rep = "XX"
+        return rep
+
+    def flip(self):
+        self.is_face_up = not self.is_face_up
+
 class Hand(object):
     """ 'Рука': набор карт на руках у одного игрока """
     def __init__(self):
@@ -76,3 +86,19 @@ class Deck(Hand):
                     self.give(top_card, hand)
                 else:
                     print("Не могу больше сдавать: карты кончились!")
+
+# основная часть
+card1 = Card("A", "c")
+card2 = Unprintable_Card("A", "d")
+card3 = Positionable_Card("A", "h")
+print("Печатаю объект Card: ")
+print(card1)
+print("\nПечатаю объект Unprintable_Card: ")
+print(card2)
+print("\nПечатаю объект Positionable_Card: ")
+print(card3)
+print("\nПереворачиваю объект Positionable_Card: ")
+card3.flip()
+print("\nПечатаю объект Positionable_Card: ")
+print(card3)
+input("\nPress the enter key to exit.")
