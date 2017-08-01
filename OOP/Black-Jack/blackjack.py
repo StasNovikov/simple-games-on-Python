@@ -76,5 +76,114 @@ class BJ_Player(BJ_Hand):
 
     def lose(self):
         """ Проиграл """
-        pass
+        print(self.name, " проиграл.")
 
+    def win(self):
+        """ Выиграл """
+        print(self.name, " выиграл.")
+
+    def push(self):
+        """ Ничья """
+        print(self.name, " сыграл с компьютером вничью.")
+
+class BJ_Dealer(BJ_Hand):
+    """ Дилер в игре 'Блек-Джек' """
+
+    def is_hitting(self):
+        """ Определяет нужно ли дилеру ещё карту """
+        return self.total < 17
+
+    def bust(self):
+        """ Перебор """
+        print(self.name, " перебрал.")
+
+    def flip_first_card(self):
+        """ Переворот первой карты дилера """
+        first_card = self.cards[0]
+        first_card.flip()
+
+class BJ_Game:
+    """ Игра в Блек-Джек """
+
+    def __init__(self, names):
+        self.players = []
+        for name in names:
+            player = BJ_Player(name)
+            self.players.append(player)
+        self.dealer = BJ_Dealer("Dealer")
+        self.deck = BJ_Deck()
+        self.deck.populate()
+        self.deck.shuffle()
+
+    @property
+    def still_playing(self):
+        """ Список игроков ещё не перебравших максимально допустимое количество очков """
+        sp = []
+        for player in self.players:
+            if not player.is_busted():
+                sp.append(player)
+        return sp
+
+    def __additional_cards(self, player):
+        """ Сдача карт дилером игроку """
+        while not player.is_busted() and player.is_hitting():
+            self.deck.deal([player])
+            print(player)
+            if player.is_busted():
+                player.bust()
+
+    def play(self):
+        """ Игровой процесс """
+        # сдача всем по 2 карты
+        self.deck.deal(self.players + [self.dealer], per_hand = 2)
+        # первая из карт, сданных дилеру переворачивается рубашкой вверх
+        self.dealer.flip_first_card()
+        for player in self.players:
+            print(player)
+        print(self.dealer)
+        # сдача дополнительных карт игрокам
+        for player in self.players:
+            self.__additional_cards(player)
+        # первая карта дилера раскрывается
+        self.dealer.flip_first_card()
+        if not self.still_playing:
+            # все игроки перебрали, показываем только "руку" дилера
+            print(self.dealer)
+        else:
+            # сдача дополнительных карт дилеру
+            print(self.dealer)
+            self.__additional_cards(self.dealer)
+            if self.dealer.is_busted():
+                # выигрывают все кто остался в игре
+                for player in self.still_playing:
+                    player.win()
+            else:
+                # сравниваем сумму очков у дилера и у игроков, оставшихся в игре
+                for player in self.still_playing:
+                    if player.total > self.dealer.total:
+                        player.win()
+                    elif player.total < self.dealer.total:
+                        player.lose()
+                    else:
+                        player.push()
+        # удаление всех карт
+        for player in self.players:
+            player.clear()
+        self.dealer.clear()
+
+def main():
+    print("\t\tДобро пожаловать за игровой стол игры Black-Jack!\n")
+    names = []
+    number = games.ask_number("Сколько всего игроков? (1-7): ", low = 1, high = 8)
+    for i in range(number):
+        name = input("Введите имя игрока: ")
+        names.append(name)
+        print()
+    game = BJ_Game(names)
+    again = None
+    while again != "n":
+        game.play()
+        again = games.ask_yes_no("\nХотите ещё сыграть? (y/n): " )
+    input("\n\nНажмите 'Enter', чтобы выйти.")
+
+main()
